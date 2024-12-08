@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Multifigures.FIgures
+namespace Multifigures.Figures
 {
-    internal class Triangle : Shape 
+    sealed class Triangle : Shape 
     {
+        public Triangle(int xx, int yy) : base(xx, yy)
+        { }
     }
 }

@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Multifigures.FIgures
+namespace Multifigures.Figures
 {
-    internal class Square : Shape
+    sealed class Square : Shape
     {
+        public Square(int xx, int yy) : base(xx, yy) { 
+
+        }
     }
 }

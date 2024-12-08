@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Multifigures.FIgures
+namespace Multifigures.Figures
 {
-    internal class Circle : Shape
-
-    {
+    sealed class Circle : Shape
+    { 
+        public Circle(int xx, int yy) : base(xx, yy) { }
     }
 }
