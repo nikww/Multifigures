@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Avalonia.Media;
+using System;
 using System.Collections.Generic;
-using System.Drawing;
+//using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices.JavaScript;
 using System.Text;
@@ -14,8 +15,8 @@ namespace Multifigures
         protected static int r;
         protected Color c;  
         
-        protected Shape(int xx, int yy) {
-            x = xx; y = yy;
+        protected Shape(int xx, int yy, Color cc) {
+            x = xx; y = yy; c = cc;
         }
         static Shape()
         {
@@ -32,5 +33,7 @@ namespace Multifigures
             get { return y; }
             set { y = value; }
         }
+
+        public abstract void Draw(DrawingContext context);
     }
 }

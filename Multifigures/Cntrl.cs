@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Avalonia;
+using Multifigures.Figures;
+using System.Threading;
 
 namespace Multifigures
 {
@@ -13,10 +15,16 @@ namespace Multifigures
     {
         public override void Render(DrawingContext context)
         {
-            Brush brush = new SolidColorBrush(Colors.Black);
-            Pen pen = new Pen(Brushes.Aqua, 1, lineCap: PenLineCap.Square);
-
-            context.DrawEllipse(brush, pen, new Point(100, 100), 10, 10);
+            List<Shape> Figures = [
+                new Circle(100, 100, Colors.Aqua),
+                new Square(200, 200, Colors.Pink),
+                new Triangle(300, 300, Colors.DarkCyan)
+            ];
+            
+            foreach (Shape s in Figures)
+            {
+                s.Draw(context);
+            }
         }
     }
 }
