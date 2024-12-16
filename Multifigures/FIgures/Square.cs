@@ -27,5 +27,9 @@ namespace Multifigures.Figures
             context.DrawLine(pen, p3, p4);
             context.DrawLine(pen, p4, p1);
         }
+        public override bool IsInside(double curs_x, double curs_y)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -10,13 +10,21 @@ namespace Multifigures.Figures
 {
     public sealed class Circle : Shape
     { 
-        public Circle(int xx, int yy, Color cc) : base(xx, yy, cc) { }
+        public Circle(double xx, double yy, Color cc) : base(xx, yy, cc) { }
 
         public override void Draw(DrawingContext context)
         {
             Brush brush = new SolidColorBrush(Colors.Black);
             Pen pen = new Pen(new SolidColorBrush(c), 1, lineCap: PenLineCap.Square);
             context.DrawEllipse(brush, pen, new Point(x, y), r, r);
+        }
+        public override bool IsInside(double curs_x, double curs_y)
+        {
+            if (Math.Abs(curs_x - x) <= r && Math.Abs(curs_y - y) <= r)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

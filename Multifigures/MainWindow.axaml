@@ -5,6 +5,10 @@
 		xmlns:Multifigures ="clr-namespace:Multifigures"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Multifigures.MainWindow"
-        Title="Multifigures">
+        Title="Multifigures"
+		PointerPressed = "Win_PointerPressed"
+		PointerMoved ="Win_PointerMoved"
+		PointerReleased ="Win_PointerReleased"           
+		>
 	<Multifigures:CustomControl Name ="myCC"/>   
 </Window>
