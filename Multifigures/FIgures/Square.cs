@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Multifigures.Figures
 {
-    sealed class Square : Shape
+    public sealed class Square : Shape
     {
         public Square(int xx, int yy, Color cc) : base(xx, yy, cc) {}
 
@@ -29,7 +29,12 @@ namespace Multifigures.Figures
         }
         public override bool IsInside(double curs_x, double curs_y)
         {
-            throw new NotImplementedException();
+            double a = Math.Sqrt(r * r / 2);
+            if (Math.Abs(curs_x - x) <= a && Math.Abs(curs_y - y) <= a)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
