@@ -29,7 +29,7 @@ namespace Multifigures.Figures
         {
             double a = Point.Distance(p1, p2), b = Point.Distance(p1, curs), c = Point.Distance(p2, curs);
             double p = (a + b + c) / 2;
-            return Math.Sqrt(p * (p - a) * (p - b) * (p - c));
+              return Math.Sqrt(p * (p - a) * (p - b) * (p - c));
         }
         public override bool IsInside(double curs_x, double curs_y)
         {

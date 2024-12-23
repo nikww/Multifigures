@@ -19,17 +19,34 @@ namespace Multifigures
             new Square(200, 200, Colors.Azure),
             new Triangle(300, 300, Colors.Green)
         ];
-        public List<Shape> Dragged_figures = []; 
+        
 
-        public void Click(double cx, double cy)
+        public void Click(double cx, double cy, Avalonia.Input.PointerPoint point)
         {
-            foreach (var f in Figures)
+            if (point.Properties.IsLeftButtonPressed)
             {
-                if (!f.IsInside(cx, cy)) continue;
+                bool found = false;
+                foreach (var f in Figures)
+                {
+                    if (!f.IsInside(cx, cy)) continue;
 
-                prevx = cx; prevy = cy;
-                f.moving = true;
-                Dragged_figures.Add(f);
+                    prevx = cx; prevy = cy; found = true;
+                    f.moving = true;
+                }
+                if (!found)
+                {
+                    Figures.Add(new Circle(cx, cy, Colors.AliceBlue));
+                }
+            }
+            if (point.Properties.IsRightButtonPressed) {
+                Figures.Reverse();
+                foreach (var f in Figures.ToList())
+                {
+                    if (!f.IsInside(cx, cy)) continue;
+                    Figures.Remove(f);
+                    break;
+                }
+                Figures.Reverse();
             }
         }
 
@@ -37,21 +54,18 @@ namespace Multifigures
         {
             foreach (var f in Figures)
             {
-                if (!Dragged_figures.Contains(f)) continue;
+                if (!f.moving) continue;
                 f.X += cx - prevx; f.Y += cy - prevy;
             }
             prevx = cx; prevy = cy;
             InvalidateVisual();
         }
         
-        public void Release(double cx, double cy)
+        public void Release()
         {
             foreach (var f in Figures)
             {
-                if (!Dragged_figures.Contains(f)) continue;
-
                 f.moving = false;
-                Dragged_figures.Remove(f);
             }
         }
 

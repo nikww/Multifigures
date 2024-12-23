@@ -21,13 +21,14 @@ namespace Multifigures
         private void Win_PointerPressed(object sender, Avalonia.Input.PointerPressedEventArgs e)
         {
             CustomControl CC = this.Find<CustomControl>("myCC");
-            CC.Click(e.GetPosition(CC).X, e.GetPosition(CC).Y);
+            var point = e.GetCurrentPoint(sender as CustomControl);
+            CC.Click(e.GetPosition(CC).X, e.GetPosition(CC).Y, point);
         }
 
         private void Win_PointerReleased(object sender, Avalonia.Input.PointerReleasedEventArgs e)
         {
             CustomControl CC = this.Find<CustomControl>("myCC");
-            CC.Release(e.GetPosition(CC).X, e.GetPosition(CC).Y);
+            CC.Release();
         }
         
     }
