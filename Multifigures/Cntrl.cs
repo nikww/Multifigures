@@ -33,7 +33,7 @@ namespace Multifigures
                 }
                 if (!found)
                 {
-                    Figures.Add(new Circle(cx, cy, Colors.AliceBlue));
+                    Figures.Add(new Triangle(cx, cy, Colors.AliceBlue));
                 }
             }
             if (point.Properties.IsRightButtonPressed) {
@@ -67,6 +67,52 @@ namespace Multifigures
             }
         }
 
+        private void DrawConvexHull(DrawingContext context)
+        {
+            int i = 0;
+            foreach (Shape s in Figures)
+            {
+                int j = 0;
+                foreach (Shape s2 in Figures)
+                {
+                    if (j <= i) { j++; continue; }
+                    int m = 0, cntup = 0, cntdown = 0;
+                    if (s.X == s2.X)
+                    {
+                        foreach (Shape s3 in Figures)
+                        {
+                            if (i == m || j == m) { m++; continue; }
+                            if (s3.X > s.X) cntup++;
+                            else if (s3.X < s.X) cntdown++;
+                            else { cntup++; cntdown++; }
+                            m++;
+                        }
+                    }
+                    else
+                    {
+                        double k = (s.Y - s2.Y) / (s.X - s2.X), b = s.Y - k * s.X; m = 0;
+                        foreach (Shape s3 in Figures)
+                        {
+                            if (i == m || j == m) { m++; continue; }
+                            double y = k * s3.X + b;
+                            if (s3.Y > y) cntup++;
+                            else if (s3.Y < y) cntdown++;
+                            else { cntup++; cntdown++; }
+                            m++;
+                        }
+                    }
+
+                    if (cntup == 0 || cntdown == 0)
+                    {
+                        Pen pen = new Pen(new SolidColorBrush(Colors.Beige), 1, lineCap: PenLineCap.Square);
+                        context.DrawLine(pen, new Point(s.X, s.Y), new Point(s2.X, s2.Y));
+                    }
+                    j++;
+                }
+                i++;
+            }
+        }
+
         public override void Render(DrawingContext context)
         {
             foreach (Shape s in Figures)
@@ -76,36 +122,8 @@ namespace Multifigures
             
             if (Figures.Count >= 3)
             {
-                int i = 0;
-                foreach (Shape s in Figures)
-                {
-                    int j = 0;
-                    foreach (Shape s2 in Figures)
-                    {
-                        if (j <= i) { j++; continue; }
-
-                        // y1 = kx1 + b; y2 = kx2 + b; y1 - y2 = k(x1 - x2)
-                        double k = (s.Y - s2.Y) / (s.X - s2.X), b = s.Y - k * s.X; int m =  0, cntup = 0, cntdown = 0;
-                        foreach (Shape s3 in Figures)
-                        {
-                            if (i == m || j == m) { m++; continue; }
-                            double y = k * s3.X + b;
-                            if (s3.Y >= y) cntup++;
-                            else cntdown++;
-                            m++;
-                        }
-                        if (cntup == 0 || cntdown == 0)
-                        {
-                            Pen pen = new Pen(new SolidColorBrush(Colors.Beige), 1, lineCap: PenLineCap.Square);
-                            context.DrawLine(pen, new Point(s.X, s.Y), new Point(s2.X, s2.Y));
-                        }
-                        j++;
-                    }
-                    i++;
-                }
+                DrawConvexHull(context);
             }
-            
-
         }
     }
 }
