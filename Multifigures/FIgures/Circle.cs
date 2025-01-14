@@ -20,7 +20,7 @@ namespace Multifigures.Figures
         }
         public override bool IsInside(double curs_x, double curs_y)
         {
-            if (Math.Abs(curs_x - x) <= r && Math.Abs(curs_y - y) <= r)
+            if (Math.Sqrt(Math.Abs(curs_x - x) * Math.Abs(curs_x - x) + Math.Abs(curs_y - y) * Math.Abs(curs_y - y)) <= r)
             {
                 return true;
             }

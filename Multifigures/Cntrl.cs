@@ -15,9 +15,7 @@ namespace Multifigures
     {
         private double prevx, prevy;
         public List<Shape> Figures = [
-            new Circle(100, 100, Colors.Aqua),
-            new Square(200, 200, Colors.Azure),
-            new Triangle(300, 300, Colors.Green)
+            
         ];
         
 
@@ -75,6 +73,39 @@ namespace Multifigures
             {
                 s.Draw(context);
             }
+            
+            if (Figures.Count >= 3)
+            {
+                int i = 0;
+                foreach (Shape s in Figures)
+                {
+                    int j = 0;
+                    foreach (Shape s2 in Figures)
+                    {
+                        if (j <= i) { j++; continue; }
+
+                        // y1 = kx1 + b; y2 = kx2 + b; y1 - y2 = k(x1 - x2)
+                        double k = (s.Y - s2.Y) / (s.X - s2.X), b = s.Y - k * s.X; int m =  0, cntup = 0, cntdown = 0;
+                        foreach (Shape s3 in Figures)
+                        {
+                            if (i == m || j == m) { m++; continue; }
+                            double y = k * s3.X + b;
+                            if (s3.Y >= y) cntup++;
+                            else cntdown++;
+                            m++;
+                        }
+                        if (cntup == 0 || cntdown == 0)
+                        {
+                            Pen pen = new Pen(new SolidColorBrush(Colors.Beige), 1, lineCap: PenLineCap.Square);
+                            context.DrawLine(pen, new Point(s.X, s.Y), new Point(s2.X, s2.Y));
+                        }
+                        j++;
+                    }
+                    i++;
+                }
+            }
+            
+
         }
     }
 }
