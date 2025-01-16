@@ -12,7 +12,7 @@ namespace Multifigures.Figures
     { 
         public Circle(double xx, double yy, Color cc) : base(xx, yy, cc) { }
 
-        public override void Draw(DrawingContext context)
+        public override void Draw(DrawingContext context) 
         {
             Brush brush = new SolidColorBrush(Colors.Black);
             Pen pen = new Pen(new SolidColorBrush(c), 1, lineCap: PenLineCap.Square);

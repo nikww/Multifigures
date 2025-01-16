@@ -15,7 +15,10 @@ namespace Multifigures
     {
         private double prevx, prevy;
         public List<Shape> Figures = [
-            
+            new Circle(100, 100, Colors.AliceBlue),
+            new Circle(250, 250, Colors.AliceBlue),
+            new Circle (300, 300, Colors.AliceBlue),
+             new Circle (300, 300, Colors.AliceBlue)
         ];
         
 
@@ -77,14 +80,15 @@ namespace Multifigures
                 {
                     if (j <= i) { j++; continue; }
                     int m = 0, cntup = 0, cntdown = 0;
+                    
                     if (s.X == s2.X)
                     {
                         foreach (Shape s3 in Figures)
                         {
-                            if (i == m || j == m) { m++; continue; }
+                            if (i == m || j == m || (s.X == s3.Y && s.X == s3.X) || (s2.X == s3.X && s2.Y == s3.Y)) { m++; continue; }
                             if (s3.X > s.X) cntup++;
-                            else if (s3.X < s.X) cntdown++;
-                            else { cntup++; cntdown++; }
+                            else if (s3.X < s.X) cntdown++; 
+                            
                             m++;
                         }
                     }
@@ -93,11 +97,11 @@ namespace Multifigures
                         double k = (s.Y - s2.Y) / (s.X - s2.X), b = s.Y - k * s.X; m = 0;
                         foreach (Shape s3 in Figures)
                         {
-                            if (i == m || j == m) { m++; continue; }
+                            if (i == m || j == m || (s.X == s3.Y && s.X == s3.X) || (s2.X == s3.X && s2.Y == s3.Y)) { m++; continue; }
                             double y = k * s3.X + b;
                             if (s3.Y > y) cntup++;
                             else if (s3.Y < y) cntdown++;
-                            else { cntup++; cntdown++; }
+                            
                             m++;
                         }
                     }
