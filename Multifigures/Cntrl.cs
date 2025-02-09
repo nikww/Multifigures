@@ -178,7 +178,7 @@ namespace Multifigures
                     {
                         Pen pen = new Pen(new SolidColorBrush(Colors.Beige), 1, lineCap: PenLineCap.Square);
                         context.DrawLine(pen, new Point(s.X, s.Y), new Point(s2.X, s2.Y));
-                        s.is_inside_hull = true; s2.is_inside_hull = true;
+                        
                     }
                     
                     j++;
