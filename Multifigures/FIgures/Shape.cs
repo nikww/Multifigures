@@ -12,8 +12,8 @@ namespace Multifigures
 {   
     public abstract class Shape
     {
-        public bool moving;
-        protected double x, y; 
+        public bool moving, is_inside_hull;
+        protected double x, y; public double prevx, prevy;
         protected static int r;
         protected Color c;  
         

@@ -8,18 +8,18 @@ using System.Threading.Tasks;
 using Avalonia;
 using Multifigures.Figures;
 using System.Threading;
+using System.IO.Pipelines;
 
 namespace Multifigures
 {
     public class CustomControl : UserControl
     {
-        private double prevx, prevy;
+        private bool click_hull = false;
         public List<Shape> Figures = [
-            new Circle(100, 100, Colors.AliceBlue),
-            new Circle(250, 250, Colors.AliceBlue),
-            new Circle (300, 300, Colors.AliceBlue),
-             new Circle (300, 300, Colors.AliceBlue)
+            
         ];
+        public List<Shape> Hull = [];
+        
         
 
         public void Click(double cx, double cy, Avalonia.Input.PointerPoint point)
@@ -31,13 +31,18 @@ namespace Multifigures
                 {
                     if (!f.IsInside(cx, cy)) continue;
 
-                    prevx = cx; prevy = cy; found = true;
+                    f.prevx = cx; f.prevy = cy; found = true;
                     f.moving = true;
                 }
                 if (!found)
                 {
-                    Figures.Add(new Triangle(cx, cy, Colors.AliceBlue));
+                    Triangle t = new Triangle(cx, cy, Colors.AliceBlue);
+                    Figures.Add(t); ConvexHull();
+                    if (!Hull.Contains(t) && Figures.Count >= 3) click_hull = true;
+                    else click_hull = false;
                 }
+                
+                
             }
             if (point.Properties.IsRightButtonPressed) {
                 Figures.Reverse();
@@ -47,28 +52,93 @@ namespace Multifigures
                     Figures.Remove(f);
                     break;
                 }
-                Figures.Reverse();
+                Figures.Reverse();           
             }
         }
 
-        public void Move(double cx, double cy)
-        {
+        public void Move(double cx, double cy) {
+            if (click_hull)
+            {
+                foreach (var f in Figures) f.moving = true;
+            }
             foreach (var f in Figures)
             {
-                if (!f.moving) continue;
-                f.X += cx - prevx; f.Y += cy - prevy;
+                if (f.moving)
+                {
+                    f.X += cx - f.prevx;
+                    f.Y += cy - f.prevy;
+                }      
             }
-            prevx = cx; prevy = cy;
+            foreach(var f in Figures) { 
+                f.prevx = cx; f.prevy = cy;
+            }
             InvalidateVisual();
+
         }
         
         public void Release()
         {
+            click_hull = false;
             foreach (var f in Figures)
             {
                 f.moving = false;
             }
+            ConvexHull();
         }
+
+
+        private void ConvexHull()
+        {
+            Hull.Clear();
+            int i = 0;
+            foreach (Shape s in Figures)
+            {
+                int j = 0;
+                foreach (Shape s2 in Figures)
+                {
+                    if (j <= i) { j++; continue; }
+                    int m = 0, cntup = 0, cntdown = 0;
+
+                    if (s.X == s2.X)
+                    {
+                        foreach (Shape s3 in Figures)
+                        {
+                            if (i == m || j == m) { m++; continue; }
+                            if (s3.X > s.X) cntup++;
+                            else if (s3.X < s.X) cntdown++;
+                            m++;
+                        }
+                    }
+                    else
+                    {
+                        double k = (s.Y - s2.Y) / (s.X - s2.X), b = s.Y - k * s.X; m = 0;
+                        foreach (Shape s3 in Figures)
+                        {
+                            if (i == m || j == m) { m++; continue; }
+                            double y = k * s3.X + b;
+                            if (s3.Y > y) cntup++;
+                            else if (s3.Y < y) cntdown++;
+                            m++;
+                        }
+                    }
+
+                    if (cntup == 0 || cntdown == 0)
+                    {
+                        if (!Hull.Contains(s)) Hull.Add(s);
+                        if (!Hull.Contains(s2)) Hull.Add(s2);
+                    }
+
+                    j++;
+                }
+                i++;
+            }
+
+            foreach(var s in Figures.ToList())
+            {
+                if (!Hull.Contains(s) && Figures.Count >= 4) Figures.Remove(s);
+            }
+        }
+
 
         private void DrawConvexHull(DrawingContext context)
         {
@@ -85,7 +155,7 @@ namespace Multifigures
                     {
                         foreach (Shape s3 in Figures)
                         {
-                            if (i == m || j == m || (s.X == s3.Y && s.X == s3.X) || (s2.X == s3.X && s2.Y == s3.Y)) { m++; continue; }
+                            if (i == m || j == m) { m++; continue; }
                             if (s3.X > s.X) cntup++;
                             else if (s3.X < s.X) cntdown++; 
                             m++;
@@ -96,9 +166,9 @@ namespace Multifigures
                         double k = (s.Y - s2.Y) / (s.X - s2.X), b = s.Y - k * s.X; m = 0;
                         foreach (Shape s3 in Figures)
                         {
-                            if (i == m || j == m || (s.X == s3.Y && s.X == s3.X) || (s2.X == s3.X && s2.Y == s3.Y)) { m++; continue; }                          
+                            if (i == m || j == m) { m++; continue; }                          
                             double y = k * s3.X + b;
-                            if (s3.Y > y) cntup++;
+                            if (s3.Y > y) cntup++;      
                             else if (s3.Y < y) cntdown++;
                             m++;
                         }
@@ -108,12 +178,17 @@ namespace Multifigures
                     {
                         Pen pen = new Pen(new SolidColorBrush(Colors.Beige), 1, lineCap: PenLineCap.Square);
                         context.DrawLine(pen, new Point(s.X, s.Y), new Point(s2.X, s2.Y));
+                        s.is_inside_hull = true; s2.is_inside_hull = true;
                     }
+                    
                     j++;
                 }
                 i++;
             }
+
+            
         }
+
 
         public override void Render(DrawingContext context)
         {
@@ -121,11 +196,11 @@ namespace Multifigures
             {
                 s.Draw(context);
             }
-            
-            if (Figures.Count >= 3)
-            {
+
+            if (Figures.Count >= 3) {
                 DrawConvexHull(context);
-            }
+            } 
         }
     }
 }
+    
