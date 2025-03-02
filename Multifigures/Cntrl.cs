@@ -9,6 +9,10 @@ using Avalonia;
 using Multifigures.Figures;
 using System.Threading;
 using System.IO.Pipelines;
+using System.Text.Json.Serialization.Metadata;
+using System.Net.Sockets;
+using static System.Net.Mime.MediaTypeNames;
+using System.Collections;
 
 namespace Multifigures
 {
@@ -16,7 +20,6 @@ namespace Multifigures
     {
         private bool click_hull = false;
         public List<Shape> Figures = [
-            
         ];
         public List<Shape> Hull = [];
         
@@ -37,11 +40,11 @@ namespace Multifigures
                 if (!found)
                 {
                     Triangle t = new Triangle(cx, cy, Colors.AliceBlue);
-                    Figures.Add(t); ConvexHull();
+                    Figures.Add(t); JarvisHull();
                     if (!Hull.Contains(t) && Figures.Count >= 3) click_hull = true;
                     else click_hull = false;
                 }
-                
+                InvalidateVisual();
                 
             }
             if (point.Properties.IsRightButtonPressed) {
@@ -83,7 +86,7 @@ namespace Multifigures
             {
                 f.moving = false;
             }
-            ConvexHull();
+            JarvisHull();
         }
 
 
@@ -189,6 +192,78 @@ namespace Multifigures
             
         }
 
+        private void JarvisHull()
+        {
+
+            Hull.Clear();
+            Pen pen = new Pen(new SolidColorBrush(Colors.Beige), 1, lineCap: PenLineCap.Square);
+
+            Shape cur = Figures.Where(p => p.X == Figures.Min(min => min.X)).First(), next;
+
+            do
+            {
+                Hull.Add(cur);
+                next = Figures.First();
+
+                foreach (var p in Figures)
+                {
+                    if (p == Figures.First()) continue;
+                    if (cur == next || rotate(cur, next, p) < 0)
+                    {
+                        next = p;
+                    }
+                }
+                cur = next;
+            }
+            while (next != Hull.First());
+
+            
+            foreach (var s in Figures.ToList())
+            {
+                if (!Hull.Contains(s) && Figures.Count >= 4) Figures.Remove(s);
+            }
+        }
+        private void DrawJarvisHull(DrawingContext context)
+        {
+            Hull.Clear(); 
+            Pen pen = new Pen(new SolidColorBrush(Colors.Beige), 1, lineCap: PenLineCap.Square);
+
+            Shape cur = Figures.Where(p => p.X == Figures.Min(min => min.X)).First(), next;
+
+            do
+            {
+                Hull.Add(cur);
+                next = Figures.First();
+
+                foreach (var p in Figures)
+                {
+                    if (p == Figures.First()) continue;
+                    if (cur == next || rotate(cur, next, p) < 0)
+                    {
+                        next = p;
+                    } 
+                }
+                cur = next;
+            }
+            while (next != Hull.First());
+
+            Shape prev = Hull.First();
+            foreach (var p in Hull) {
+                if (p == Hull.First()) continue;
+                context.DrawLine(pen, new Point(prev.X, prev.Y), new Point(p.X, p.Y));
+                prev = p;
+                //context.DrawLine(pen, new Point(100, 100), new Point(p.X, p.Y));
+            }
+            context.DrawLine(pen, new Point(Hull.Last().X, Hull.Last().Y), new Point(Hull.First().X, Hull.First().Y));  
+        }
+
+        double rotate (Shape p1, Shape p2, Shape p)
+        {
+            return (p2.X - p1.X) * (p.Y - p1.Y) - (p.X - p1.X) * (p2.Y - p1.Y);
+        }
+
+
+
 
         public override void Render(DrawingContext context)
         {
@@ -198,7 +273,8 @@ namespace Multifigures
             }
 
             if (Figures.Count >= 3) {
-                DrawConvexHull(context);
+                //DrawConvexHull(context);
+                DrawJarvisHull(context);
             } 
         }
     }
