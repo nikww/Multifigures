@@ -10,5 +10,16 @@
 		PointerMoved ="Win_PointerMoved"
 		PointerReleased ="Win_PointerReleased"           
 		>
-	<Multifigures:CustomControl Name ="myCC"/>   
+	
+	
+	<DockPanel>
+		<Menu DockPanel.Dock ="Top" Background ="BlueViolet" >
+			<MenuItem Header = "Shape">
+				<ListBox x:Name ="Shapes" SelectionChanged ="Win_ShapeChanged"/> 
+			</MenuItem>
+		</Menu>
+		<Multifigures:CustomControl Name ="myCC"/>
+	</DockPanel>
+
+	
 </Window>

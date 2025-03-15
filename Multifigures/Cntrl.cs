@@ -13,12 +13,14 @@ using System.Text.Json.Serialization.Metadata;
 using System.Net.Sockets;
 using static System.Net.Mime.MediaTypeNames;
 using System.Collections;
+using Avalonia.Media.TextFormatting.Unicode;
 
 namespace Multifigures
 {
     public class CustomControl : UserControl
     {
         private bool click_hull = false;
+        private int shape_index;
         public List<Shape> Figures = [
         ];
         public List<Shape> Hull = [];
@@ -39,10 +41,7 @@ namespace Multifigures
                 }
                 if (!found)
                 {
-                    Triangle t = new Triangle(cx, cy, Colors.AliceBlue);
-                    Figures.Add(t); JarvisHull();
-                    if (!Hull.Contains(t) && Figures.Count >= 3) click_hull = true;
-                    else click_hull = false;
+                    AddFigure(cx, cy);
                 }
                 InvalidateVisual();
                 
@@ -57,6 +56,25 @@ namespace Multifigures
                 }
                 Figures.Reverse();           
             }
+        }
+
+        private void AddFigure(double cx, double cy) {
+            Shape t;
+            if (shape_index == 0)
+            {
+                t = new Circle(cx, cy, Colors.AliceBlue);
+            }
+            else if (shape_index == 1) {
+                t = new Square(cx, cy, Colors.AliceBlue);
+            }
+            else
+            {
+                t = new Triangle(cx, cy, Colors.AliceBlue);
+            }
+            
+            Figures.Add(t); JarvisHull();
+            if (!Hull.Contains(t) && Figures.Count >= 3) click_hull = true;
+            else click_hull = false;
         }
 
         public void Move(double cx, double cy) {
@@ -198,8 +216,9 @@ namespace Multifigures
             Hull.Clear();
             Pen pen = new Pen(new SolidColorBrush(Colors.Beige), 1, lineCap: PenLineCap.Square);
 
+            if (Figures.Count <= 2) return;
             Shape cur = Figures.Where(p => p.X == Figures.Min(min => min.X)).First(), next;
-
+          
             do
             {
                 Hull.Add(cur);
@@ -263,7 +282,7 @@ namespace Multifigures
         }
 
 
-
+        public void ChangeShape(int index) => shape_index = index;
 
         public override void Render(DrawingContext context)
         {

@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using System;
+using System.Globalization;
 using System.Runtime.Serialization;
 using System.Security.AccessControl;
 
@@ -10,6 +11,8 @@ namespace Multifigures
         public MainWindow()
         {
             InitializeComponent();
+            Shapes.SelectedIndex = 0;
+            Shapes.ItemsSource = new string[] { "Circle", "Square", "Triange" };
         }
 
         private void Win_PointerMoved(object sender, Avalonia.Input.PointerEventArgs e)
@@ -30,6 +33,14 @@ namespace Multifigures
             CustomControl CC = this.Find<CustomControl>("myCC");
             CC.Release();
         }
-        
+
+
+        private void Win_ShapeChanged (object sender,  SelectionChangedEventArgs e)
+        {
+            CustomControl CC = this.Find<CustomControl>("myCC");
+
+            int index = Shapes.SelectedIndex;
+            CC.ChangeShape(index);
+        }
     }
 }   
