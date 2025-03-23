@@ -20,7 +20,7 @@ namespace Multifigures
     public class CustomControl : UserControl
     {
         private bool click_hull = false;
-        private int shape_index;
+        private int shape_index, algo_index;
         public List<Shape> Figures = [
         ];
         public List<Shape> Hull = [];
@@ -72,7 +72,7 @@ namespace Multifigures
                 t = new Triangle(cx, cy, Colors.AliceBlue);
             }
             
-            Figures.Add(t); JarvisHull();
+            Figures.Add(t); CheckHull();
             if (!Hull.Contains(t) && Figures.Count >= 3) click_hull = true;
             else click_hull = false;
         }
@@ -104,7 +104,7 @@ namespace Multifigures
             {
                 f.moving = false;
             }
-            JarvisHull();
+            CheckHull();
         }
 
 
@@ -209,7 +209,6 @@ namespace Multifigures
 
             
         }
-
         private void JarvisHull()
         {
 
@@ -281,8 +280,21 @@ namespace Multifigures
             return (p2.X - p1.X) * (p.Y - p1.Y) - (p.X - p1.X) * (p2.Y - p1.Y);
         }
 
+        private void DrawHull(DrawingContext context)
+        {
+            if (algo_index == 0) DrawConvexHull(context);
+            else if (algo_index == 1) DrawJarvisHull(context);
+        }
+        private void CheckHull()
+        {
+            if (algo_index == 0) ConvexHull();
+            else if (algo_index == 1) JarvisHull();
+        }
+
+
 
         public void ChangeShape(int index) => shape_index = index;
+        public void ChangeAlgo(int index) => algo_index = index;
 
         public override void Render(DrawingContext context)
         {
@@ -292,8 +304,7 @@ namespace Multifigures
             }
 
             if (Figures.Count >= 3) {
-                //DrawConvexHull(context);
-                DrawJarvisHull(context);
+                DrawHull(context);
             } 
         }
     }

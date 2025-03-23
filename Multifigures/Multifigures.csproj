@@ -19,4 +19,13 @@
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="RadiusWindow.axaml.cs">
+      <DependentUpon>RadiusWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="ComparasionWindow.axaml.cs">
+      <DependentUpon>ComparasionWindow.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

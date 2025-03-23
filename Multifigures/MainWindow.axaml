@@ -15,7 +15,13 @@
 	<DockPanel>
 		<Menu DockPanel.Dock ="Top" Background ="BlueViolet" >
 			<MenuItem Header = "Shape">
-				<ListBox x:Name ="Shapes" SelectionChanged ="Win_ShapeChanged"/> 
+				<ListBox x:Name ="Shapes" SelectionChanged ="Win_ShapeChanged"/>
+			</MenuItem>
+			<MenuItem Header ="Algorithm">
+				<ListBox x:Name = "Algo" SelectionChanged ="Win_AlgoChanged"/>
+			</MenuItem>
+			<MenuItem Header ="Args">
+				<Button Click ="Win_RadiusChanged">Radius</Button>
 			</MenuItem>
 		</Menu>
 		<Multifigures:CustomControl Name ="myCC"/>
