@@ -11,7 +11,7 @@ namespace Multifigures.Figures
 {
     public sealed class Square : Shape
     {
-        public Square(double xx, double yy, Color cc) : base(xx, yy, cc) {}
+        public Square(double xx, double yy) : base(xx, yy) {}
 
         public override void Draw(DrawingContext context)
         {

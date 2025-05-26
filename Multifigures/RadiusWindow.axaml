@@ -7,8 +7,8 @@
         Title="RadiusWindow">
 
 	<StackPanel>
-		<TextBlock Text="{Binding #slider.Value}"
+		<TextBlock Text="{Binding #Slider.Value}"
 					HorizontalAlignment="Center"/>
-		<Slider x:Name="slider" />
+		<Slider x:Name="Slider" ValueChanged ="OnRadiusValueChanged" />
 	</StackPanel>
 </Window>

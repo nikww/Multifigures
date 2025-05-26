@@ -10,7 +10,7 @@ namespace Multifigures.Figures
 {
     public sealed class Triangle : Shape 
     {
-        public Triangle(double xx, double yy, Color cc) : base(xx, yy, cc)
+        public Triangle(double xx, double yy) : base(xx, yy)
         { }
 
         private Point point1, point2, point3;

@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Multifigures
-{
-    internal class RadiusEventArgs : EventArgs
+namespace Multifigures;
+
+    public delegate void RadiusDelegate(object sender, RadiusEventArgs e);
+    public class RadiusEventArgs : EventArgs
     {
         public double r;
         public RadiusEventArgs(double radius) => r = radius;
     }
-}
+

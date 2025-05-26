@@ -10,7 +10,7 @@ namespace Multifigures.Figures
 {
     public sealed class Circle : Shape
     { 
-        public Circle(double xx, double yy, Color cc) : base(xx, yy, cc) { }
+        public Circle(double xx, double yy) : base(xx, yy) { }
 
         public override void Draw(DrawingContext context) 
         {

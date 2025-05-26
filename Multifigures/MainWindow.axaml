@@ -22,6 +22,14 @@
 			</MenuItem>
 			<MenuItem Header ="Args">
 				<Button Click ="Win_RadiusChanged">Radius</Button>
+				<Button Click ="Win_ColorChanged">Color</Button>
+			</MenuItem>
+			<MenuItem Header = "Comparasion">
+				<Button Click ="Win_OnClickOur">Our chars</Button>
+			</MenuItem>
+			<MenuItem Header ="Jump">
+				<Button Click ="Win_OnStart">Start</Button>
+				<Button Click ="Win_OnStop">Stop</Button>
 			</MenuItem>
 		</Menu>
 		<Multifigures:CustomControl Name ="myCC"/>

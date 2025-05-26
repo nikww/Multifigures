@@ -14,11 +14,11 @@ namespace Multifigures
     {
         public bool moving;
         protected double x, y; public double prevx, prevy;
-        protected static int r;
-        protected Color c;  
+        public static double r;
+        public static Color c;  
         
-        protected Shape(double xx, double yy, Color cc) {
-            x = xx; y = yy; c = cc; moving = false;
+        protected Shape(double xx, double yy) {
+            x = xx; y = yy; moving = false;
         }
         static Shape()
         {

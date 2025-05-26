@@ -1,19 +1,17 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using System;
-using System.Globalization;
-using System.Runtime.Serialization;
-using System.Security.AccessControl;
+using Avalonia.Media;
 
 namespace Multifigures
 {
     public partial class MainWindow : Window
     {
-        public RadiusWindow RadWin = new RadiusWindow()                                                                                                                               ;
+        private RadiusWindow RadWin;                                                                                                                              
 
         public MainWindow()
         {
             InitializeComponent();
+            Shape.c = Colors.White;
             Shapes.ItemsSource = new string[] { "Circle", "Square", "Triange" };
             Shapes.SelectedIndex = 0;
             Algo.ItemsSource = new string[] { "Our", "Jarvis" };
@@ -55,7 +53,52 @@ namespace Multifigures
         private void Win_RadiusChanged(object sender, RoutedEventArgs e)
         {
             CustomControl CC = this.Find<CustomControl>("myCC");
-            RadWin.Show();
+            if (RadWin is { IsLoaded: true })
+            {
+                RadWin.Activate();
+                RadWin.WindowState = WindowState.Normal;
+            }
+            else
+            {
+                RadWin = new RadiusWindow();
+                RadWin.SetRadius(Shape.r);
+                RadWin.RadiusChanged += CC.UpdateRadius;
+                RadWin.Show();
+            }
+        }
+
+        private void Win_OnClickOur(object sender, RoutedEventArgs e)
+        {
+            CustomControl CC = this.Find<CustomControl>("myCC");
+            ComparasionWindow comparasionWindow = new ComparasionWindow(CC.GetCharsOur(), CC.GetCharsJarvis());
+            comparasionWindow.Show();
+        }
+        private void Win_OnClickJarvis()
+        {
+           
+        }
+        private void Win_OnClickBoth()
+        {
+
+        }
+
+        public async void Win_ColorChanged(object sender, RoutedEventArgs e)
+        {
+            ColorWindow ColorWin = new ColorWindow();
+            ColorWin.SetColor(Shape.c);
+            var color = await ColorWin.ShowDialog<Color>(this);
+
+            CustomControl CC = this.Find<CustomControl>("myCC");
+            CC.UpdateColor(color);
+        }
+
+        public void Win_OnStart(object sender, RoutedEventArgs e)
+        {
+
+        }
+        public void Win_OnStop(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }   

@@ -7,13 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Avalonia;
 using Multifigures.Figures;
-using System.Threading;
-using System.IO.Pipelines;
-using System.Text.Json.Serialization.Metadata;
-using System.Net.Sockets;
-using static System.Net.Mime.MediaTypeNames;
-using System.Collections;
-using Avalonia.Media.TextFormatting.Unicode;
+
+using System.Diagnostics;
+using System.Diagnostics.Metrics;
 
 namespace Multifigures
 {
@@ -24,8 +20,18 @@ namespace Multifigures
         public List<Shape> Figures = [
         ];
         public List<Shape> Hull = [];
+        private int[] counter = new int[12];
         
+        private void fill()
+        {
+            counter[0] = 5; counter[1] = 25;
+            for (int i = 50, j = 2; i <= 500; i += 50, j++)
+            {
+                counter[j] = i;
+            }
+        }
         
+
 
         public void Click(double cx, double cy, Avalonia.Input.PointerPoint point)
         {
@@ -62,14 +68,14 @@ namespace Multifigures
             Shape t;
             if (shape_index == 0)
             {
-                t = new Circle(cx, cy, Colors.AliceBlue);
+                t = new Circle(cx, cy);
             }
             else if (shape_index == 1) {
-                t = new Square(cx, cy, Colors.AliceBlue);
+                t = new Square(cx, cy);
             }
             else
             {
-                t = new Triangle(cx, cy, Colors.AliceBlue);
+                t = new Triangle(cx, cy);
             }
             
             Figures.Add(t); CheckHull();
@@ -306,6 +312,75 @@ namespace Multifigures
             if (Figures.Count >= 3) {
                 DrawHull(context);
             } 
+        }
+    
+
+
+        public Dictionary<int, double> GetCharsOur()
+        {
+            fill();
+            Dictionary<int, double> map = new Dictionary<int, double>();
+            var rndm = new Random();
+            var timer = new Stopwatch();
+            List<Shape> prev_figures = Figures;
+            Figures.Clear();
+
+            for (int i = 0; i < counter.Length; i++)
+            {
+                timer.Reset(); Figures.Clear();
+                for (int j = 0; j < counter[i]; j++)
+                {
+                    Figures.Add(new Circle(rndm.Next(1, 1000), rndm.Next(1, 1000)));
+                }
+                timer.Start();
+                ConvexHull();
+                timer.Stop();
+                map.Add(counter[i], timer.Elapsed.TotalMilliseconds);
+            }
+ 
+            Figures.Clear();
+            Figures = prev_figures;
+            InvalidateVisual();
+            return map;     
+        }
+        public Dictionary<int, double> GetCharsJarvis()
+        {
+            fill();
+            Dictionary<int, double> map = new Dictionary<int, double>();
+            var rndm = new Random();
+            var timer = new Stopwatch();
+            List<Shape> prev_figures = Figures;
+            Figures.Clear();
+
+            for (int i = 0; i < counter.Length; i++)
+            {
+                timer.Reset(); Figures.Clear();
+                for (int j = 0; j < counter[i]; j++)
+                {
+                    Figures.Add(new Circle(rndm.Next(1, 1000), rndm.Next(1, 1000)));
+                }
+                timer.Start();
+                JarvisHull();
+                timer.Stop();
+                map.Add(counter[i], timer.Elapsed.TotalMilliseconds);
+            }
+
+            Figures.Clear();
+            Figures = prev_figures;
+            InvalidateVisual();
+            return map;
+        }
+
+
+        public void UpdateRadius(object sender, RadiusEventArgs e)
+        {
+            Shape.r = e.r;
+            InvalidateVisual();
+        }
+
+        public void UpdateColor(Color c)
+        {
+            Shape.c = c;
         }
     }
 }
